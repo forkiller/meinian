@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" >
+    <head >
+        <meta charset="UTF-8" >
+        <title >todolist</title >
+        <style type="text/css" >
+            .h1 {
+                /*position: absolute;*/
+                /*!*top: -10px;*!*/
+                /*width: 100%;*/
+                /*font-size: 10px;*/
+                /*font-weight: 100;*/
+                text-align: center;
+                color: rgba(175, 47, 47, .8);
+                -webkit-text-rendering: optimizeLegibility;
+                -moz-text-rendering: optimizeLegibility;
+                text-rendering: optimizeLegibility;
+            }
+
+            .list_con {
+                width: 600px;
+                margin: 50px auto 0;
+            }
+
+            .inputtxt {
+                width: 550px;
+                height: 30px;
+                border: 1px solid #ccc;
+                padding: 0px;
+                text-indent: 10px;
+            }
+
+            .inputbtn {
+                width: 40px;
+                height: 32px;
+                padding: 0px;
+                border: 1px solid #ccc;
+            }
+
+            .list {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                margin-top: 20px;
+            }
+
+            .list li {
+                height: 40px;
+                line-height: 40px;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .list li span {
+                float: left;
+            }
+
+            .list li a {
+                float: right;
+                text-decoration: none;
+                margin: 0 10px;
+            }
+        </style >
+        <link rel="stylesheet" href="../css/notebook.css" >
+    </head >
+
+    <body >
+        <div class="list_con" id="app" >
+            <!--todolist 标题-->
+            <div id="header">
+                <header >
+                    <h1 class="h1" >To do list</h1 >
+                    <input type="text" name="" id="txt1" class="inputtxt" v-model="txt" @keyup.enter="inputbtn" >
+                    <input type="button" name="" value="增加" id="btn1" class="inputbtn" @click="inputbtn" >
+                </header >
+            </div>
+
+            <!--主体-->
+            <div id="body">
+                <section class="main" >
+                    <ul class="todo-list" id="tolist">
+                        <li class="view" v-for="(item,index) in list" >
+                            <div class="view">
+                                <!-- 用 v-bind:value=(index+1) 动态绑定数据，可以获取数值-->
+                                <span class="index" >{{ index+1 }}. <input type="checkbox" name="iscompleted" :value=(index+1) /></span >
+                                <label >{{ item }}</label >
+                                <button class="up" @click="up(index)" >↑</button >
+                                <button class="down" @click="down(index)" >↓</button >
+                                <button class="destroy" @click="del"></button>
+                            </div >
+                        </li >
+                    </ul >
+                </section >
+
+                <!-- 统计和清空 -->
+                <footer class="footer" >
+                    <span class="todo-count" v-if="list.length !=0" >
+                        <strong >{{ list.length }}</strong >
+                        items left
+                    </span >
+                    <button class="clear-completed" @click="clear" v-if="list.length!=0" >
+                        Clear
+                    </button >
+                </footer >
+            </div>
+
+            <!--尾部图标-->
+            <div id="footer">
+                <footer class="info" >
+                    <p >
+                        <a href="http://www.atguigu.com/" >
+                            <img src="http://www.atguigu.com/images/index_new/logo.png" alt="" />
+                        </a >
+                    </p >
+                </footer >
+            </div>
+
+        </div>
+    </body >
+
+    <script src="../js/jquery-1.7.2.js" ></script >
+    <script src="../layer/layer.js" ></script >
+    <script src="../js/vue.min.js" ></script >
+    <script >
+        let vue = new Vue({
+            "el": "#app",
+            "data": {
+                list: ["学Java", "学C", "学Python","学Golang","数据结构","JVM","计算机组成"],
+                txt: ""
+            },
+            "methods": {
+                inputbtn() {
+                    if (this.txt == '') {
+                        layer.msg("请输入文本内容");
+                        let inputEle = document.getElementById('txt1');
+                        inputEle.focus();
+                        return;
+                    };
+                    this.list.push(this.txt);
+                    this.txt = '';
+
+                    // document.getElementsByClassName('todo-list').scrollTop='999';
+                    setTimeout(function () {
+                        document.getElementById('tolist').scrollTop = '999';
+                    })
+                },
+                up(index) {
+                    if (index == 0) {
+                        layer.msg("亲, 到顶了！");
+                    }
+
+                    // 0 相当于在index 位置插入新元素
+                    this.list.splice(index - 1, 0, this.list[index]);
+                    this.list.splice(index + 1, 1);
+                },
+                down(index) {
+                    if (index == this.list.length - 1) {
+                        layer.msg(("亲，到最后了！"));
+                    }
+                    this.list.splice(index + 2, 0, this.list[index])
+                    this.list.splice(index, 1);
+
+                },
+                del(index) {
+                    this.list.splice(index, 1)
+                },
+                clear() {
+                    this.list = [];
+                }
+            }
+        });
+    </script >
+
+</html>

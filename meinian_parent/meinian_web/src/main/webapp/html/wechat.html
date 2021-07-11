@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>聊天室</title>
+    <style type="text/css">
+        .talk_con {
+            width: 600px;
+            height: 500px;
+            border: 1px solid #666;
+            margin: 50px auto 0;
+            background: #f9f9f9;
+        }
+
+        .talk_show {
+            width: 580px;
+            height: 420px;
+            border: 1px solid #666;
+            background: #fff;
+            margin: 10px auto 0;
+            overflow: auto;
+        }
+
+        .talk_input {
+            width: 580px;
+            margin: 10px auto 0;
+        }
+
+        .whotalk {
+            width: 80px;
+            height: 30px;
+            float: left;
+            outline: none;
+        }
+
+        .talk_word {
+            width: 420px;
+            height: 26px;
+            padding: 0px;
+            float: left;
+            margin-left: 10px;
+            outline: none;
+            text-indent: 10px;
+        }
+
+        .talk_sub {
+            width: 56px;
+            height: 30px;
+            float: left;
+            margin-left: 10px;
+        }
+
+        .atalk {
+            margin: 10px;
+        }
+
+        .atalk span {
+            display: inline-block;
+            background: #0181cc;
+            border-radius: 10px;
+            color: #fff;
+            padding: 5px 10px;
+        }
+
+        .btalk {
+            margin: 10px;
+            text-align: right;
+        }
+
+        .btalk span {
+            display: inline-block;
+            background: #ef8201;
+            border-radius: 10px;
+            color: #fff;
+            padding: 5px 10px;
+        }
+    </style>
+
+    <!--引入layer,必须先引入 jquery，再引入 layer.js ,否则会报错-->
+    <script src="../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../layer/layer.js"></script>
+
+</head>
+<body>
+<div class="talk_con" id="app">
+    <div class="talk_show" id="words">
+        <div :class="[item.who == 'A' ? 'atalk':'btalk' ]" v-for="item in content">
+            <span>{{ item.who }}说：{{ item.say }}</span>
+        </div>
+
+        <!--<div class="btalk">-->
+        <!--    <span>B说：还没呢，你呢？</span>-->
+        <!--</div>-->
+    </div>
+
+    <div class="talk_input">
+        <select class="whotalk" id="who" v-model="sel">
+            <option value="0">A说：</option>
+            <option value="1">B说：</option>
+        </select>
+        <input type="text" class="talk_word" id="talkwords" v-model="txt" @keyup.enter="fnAdd">
+        <input type="button" value="发送" class="talk_sub" id="talksub" @click="fnAdd" >
+    </div>
+</div>
+</body>
+
+<script src="../js/vue.min.js"></script>
+<script type="text/javascript">
+    let vue = new Vue({
+        "el": "#app",
+        "data": {
+            content: [
+                {
+                    who: 'A',
+                    say: "吃饭了吗？"
+                },
+                {
+                    who: 'B',
+                    say: "已经吃过，吃的满汉全席，你呢？"
+                }
+            ],
+            txt: '',
+            sel: '0'
+        },
+        methods: {
+            fnAdd: function () {
+                if (this.txt == '') {
+                    layer.msg('请输入内容');
+                    return;
+                }
+                this.content.push(
+                    {
+                        who: this.sel == '0' ? 'A' : 'B',
+                        say: this.txt
+                    }
+                );
+                this.txt = '';
+                // 发送后，回到光标焦点停留在输入框
+                let inputTable = document.getElementById("talkwords")
+                inputTable.focus();
+
+                // 输入的对话多了，沾满了屏幕，需要让滚动条自动滚到底部,
+                // 滚动条输入 id=words 的div 标签中,那个标签增加了就写哪个标签的id，一般为 v-for 的父标签
+                setTimeout(function () {
+                    document.getElementById('words').scrollTop='9999';
+                },1)
+
+            },
+            fnAdd2: function () {
+                alert("enter test")
+            }
+        }
+    });
+
+</script>
+
+</html>

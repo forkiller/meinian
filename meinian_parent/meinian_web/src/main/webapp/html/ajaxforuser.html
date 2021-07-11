@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajax</title>
+    <script src="../js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="../layer/layer.js"></script>
+
+    <style type="text/css">
+        .message  {
+            background: darkcyan;
+            /*align: center;*/
+            text-align: center
+        }
+        #btn{
+            text-align: center
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <h1 class="message">{{message}}</h1>
+    <div id="btn">
+        <button style="text-align:center" @click="show">点击显示信息</button>
+    </div>
+
+</div>
+</body>
+<script src="../js/vue.min.js"></script>
+<script src="../js/axios.min.js"></script>
+<script>
+    let vue = new Vue({
+        "el": "#app",
+        "data": {
+            message: 'hello world'
+        },
+        methods: {
+            init() {
+                axios({
+                    "url": "../data/user.json",
+                    "method": "get",
+                }).then(function (response) {
+                    //layui.alert()和layui.msg()并不能传入object类型
+                    layer.msg(JSON.stringify(response.data));
+                    console.log(response.data);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            show() {
+                this.init();
+            },
+
+            init2() {
+                axios.get("../data/user.json").then(function (response) {
+                    console.log(response.data);
+                    alert(JSON.stringify(response))
+                })
+            }
+        },
+        created() {
+            this.init()
+        }
+    });
+</script>
+</html>

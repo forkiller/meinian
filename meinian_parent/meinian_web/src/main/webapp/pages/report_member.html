@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html >
+    <head >
+        <!--其中 5 指每隔 5 秒刷新一次页面。-->
+        <meta http-equiv="refresh" content="5">
+        <!-- 页面meta -->
+        <meta charset="utf-8" >
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+        <title >美年旅游</title >
+        <meta name="description" content="美年旅游" >
+        <meta name="keywords" content="美年旅游" >
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" >
+
+    </head >
+    <body class="hold-transition" >
+        <div id="app" >
+            <div class="content-header" >
+                <h1 >统计分析<small >会员数量</small ></h1 >
+                <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb" >
+                    <el-breadcrumb-item :to="{ path: '/' }" >首页</el-breadcrumb-item >
+                    <el-breadcrumb-item >统计分析</el-breadcrumb-item >
+                    <el-breadcrumb-item >会员数量</el-breadcrumb-item >
+                </el-breadcrumb >
+            </div >
+            <div class="app-container" id="app" >
+                <div class="box" >
+                    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+                    <div id="chart1" style="height:600px;" >
+
+                    </div >
+                    <div >
+                        <button onclick="getLine()" >折线图</button >
+                        <button onclick="getBar()" >柱状图</button >
+                        <button @onclick="getPie()" >折饼图</button >
+                    </div >
+                </div >
+            </div >
+        </div >
+    </body >
+    <!-- 引入组件库 -->
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../css/style.css" >
+    <script src="../js/echarts.js" ></script >
+    <script src="../js/vue.js" ></script >
+    <!--饿了么组件-->
+    <script src="../plugins/elementui/index.js" ></script >
+    <script src="../js/axios-0.18.0.js" ></script >
+    <script >
+        let vue = new Vue({
+            "el": "#app",
+            "data": {
+                // myChart1: echarts.init(document.getElementById('chart1')),
+                option: ""
+            },
+            created: function () {
+                // this.getLine();
+            },
+            methods: {
+
+
+
+                getPie() {
+                }
+            }
+        });
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        /*let option = {
+            xAxis: {
+                type: 'category',
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: [120, 200, 150, 80, 70, 110, 130],
+                type: 'bar'
+            }]
+        };*/
+        let myChart1 = echarts.init(document.getElementById('chart1'));
+        let option = "";
+        axios.get("/report/getMemberReport.do").then((res) => {
+            console.log(res.data.data);
+            option = {
+                title: {
+                    text: '会员数量'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['会员数量']
+                },
+                xAxis: {
+                    data: res.data.data.months
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    name: '会员数量',
+                    type: 'line',
+                    data: res.data.data.memberCount
+                }]
+            };
+            myChart1.setOption(option);
+        });
+
+        function getBar() {
+            console.log("getBar" + option);
+            option.series.type = 'bar';
+            console.log(option.series.type);
+            console.log(option);
+            myChart1.setOption(option);
+            location.reload();
+        };
+
+        function getLine() {
+            // 基于准备好的dom，初始化echarts实例
+            myChart1 = echarts.init(document.getElementById('chart1'));
+
+            axios.get("/report/getMemberReport.do").then((res) => {
+                console.log(res.data.data);
+                this.option = {
+                    title: {
+                        text: '会员数量'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['会员数量']
+                    },
+                    xAxis: {
+                        data: res.data.data.months
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        name: '会员数量',
+                        type: 'pie',
+                        data: res.data.data.memberCount
+                    }]
+                };
+                myChart1.setOption(option);
+                // 刷新页面
+                location.reload();
+            });
+        };
+
+
+    </script >
+</html >

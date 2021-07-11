@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.dao.TravelItemDao">
+    <!--新增-->
+    <insert id="insert" parameterType="travelItem">
+        insert into t_travelitem(code, name, sex, age, type, remark, attention)
+        values (#{code}, #{name}, #{sex}, #{age}, #{type}, #{remark}, #{attention})
+    </insert>
+
+    <update id="edit" parameterType="travelItem">
+        update t_travelitem
+        <set>
+            <if test="code != null and code.length > 0">
+                code=#{code},
+            </if>
+
+            <if test="name != null and name.length > 0">
+                name=#{name},
+            </if>
+
+            <if test="sex != null and sex.length > 0">
+                sex=#{sex},
+            </if>
+
+            <if test="age != null and age.length > 0">
+                age=#{age},
+            </if>
+
+            <if test="price != null">
+                price=#{price},
+            </if>
+
+            <if test="type != null and type.length > 0">
+                type=#{type},
+            </if>
+
+            <if test="remark != null and remark.length > 0">
+                remark=#{remark},
+            </if>
+
+            <if test="attention != null and attention.length > 0">
+                attention=#{attention},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from t_travelitem
+        where id = #{id}
+    </delete>
+    <delete id="batchDeleteByOneStatement">
+        delete from t_travelitem where id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findPage" resultType="com.atguigu.pojo.TravelItem">
+        select * from t_travelitem
+        <where>
+            <if test="value!=null and value.length>0">
+                name like "%"#{value}"%" or code=#{value}
+            </if>
+        </where>
+    </select>
+    <select id="findById" resultType="com.atguigu.pojo.TravelItem">
+        select * from t_travelitem
+        <where>
+            id = #{id}
+        </where>
+    </select>
+    <select id="findAll" resultType="com.atguigu.pojo.TravelItem">
+        select id,
+               code,
+               name,
+               sex,
+               age,
+               price,
+               type,
+               attention,
+               remark
+        from t_travelitem
+    </select>
+    <!-- # 内连接优化
+         select *
+         from t_travelitem
+         where id in (select travelitem_id
+                      from t_travelgroup_travelitem
+                      where travelgroup_id=#{id});
+        # 内连接优化
+    -->
+    <select id="findTravelItemsByTravelgroupId" resultType="com.atguigu.pojo.TravelItem">
+        select tr.*
+        from t_travelitem tr,
+             t_travelgroup_travelitem tgr
+        where tr.id = tgr.travelitem_id
+          and tgr.travelgroup_id = #{id};
+    </select>
+</mapper>
+
